@@ -100,6 +100,6 @@ public class Client {// 只是用于测试，不是完整版的client
 	}
 	
 	public static void main(String[] args) {
-		new Client().sendCommand("hello lixin");
+		new Client().sendCommand("hello woshigehaoren3");
 	}
 }
