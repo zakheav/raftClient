@@ -9,7 +9,7 @@ public class JSON {
 		JSONArray jsonArray = JSONArray.fromObject(list);
 		return jsonArray.toString();
 	}
-
+	
 	public static List<Object> JSONToArray(String json) {
 		List<Object> result = new ArrayList<Object>();
 		JSONArray jsonArray = JSONArray.fromObject(json);

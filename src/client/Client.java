@@ -4,26 +4,25 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
 import org.apache.commons.id.Hex;
-
 import util.JSON;
+import util.XML;
 
 public class Client {// 只是用于测试，不是完整版的client
 
 	private ClientSocket clientSocket;
 	private List<String> serverAddrList; // 服务器地址列表
-	private int serverNum; // 服务器数量
 	private int tryTimes; // 最多尝试次数
 	private String commandId;
 
+	@SuppressWarnings("unchecked")
 	private Client() {
-		serverNum = 3;
-		tryTimes = 5;
-		serverAddrList = new ArrayList<String>();
-		for (int i = 0; i < serverNum; ++i) {
-			int port = 8080 + i;
-			serverAddrList.add("127.0.0.1:" + port);
+		Map<String, Object> conf = new XML().nodeConf();
+		this.tryTimes = 5;
+		this.serverAddrList = new ArrayList<String>();
+		for (String ipport : (List<String>) (conf.get("ipport"))) {
+			this.serverAddrList.add(ipport);
 		}
 		commandId = getCode();
 	}
@@ -57,11 +56,11 @@ public class Client {// 只是用于测试，不是完整版的client
 		return false;
 	}
 
-	public void sendCommand(String command, boolean read) {
+	public void sendCommand(String command, boolean read, Callback callback) {
 		int count = 0;
 		while (count < tryTimes) {
 			++count;
-			if(tryConnectingLeader()) {
+			if (tryConnectingLeader()) {
 				List<Object> msg8 = new ArrayList<Object>();
 				msg8.add(8);
 				msg8.add(read);
@@ -70,23 +69,34 @@ public class Client {// 只是用于测试，不是完整版的client
 				String massage8 = JSON.ArrayToJSON(msg8);// 打包指令消息
 				try {// 发送指令
 					clientSocket.write(massage8);
-				} catch(IOException e) {
+				} catch (IOException e) {
 					clientSocket.close();
 					continue;
 				}
-				
+
 				try {
 					List<Object> msg = JSON.JSONToArray(clientSocket.read());
-					Integer msgType = (Integer)msg.get(0);
-					String resp = (String)msg.get(1);
-					if(msgType == 9) {
-						System.out.println("收到server响应");
-						System.out.println(resp);
+					Integer msgType = (Integer) msg.get(0);
+					Object resp = msg.get(1);
+					if (msgType == 9) {
+						if (resp.equals("ok")) {
+							System.out.println("接收到server的响应");
+						} else {
+							@SuppressWarnings("unchecked")
+							List<Object> resultList = (List<Object>) resp;
+							List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
+							for (Object row : resultList) {
+								@SuppressWarnings("unchecked")
+								Map<String, Object> map = (Map<String, Object>) row;
+								results.add(map);
+							}
+							callback.callback(results);
+						}
 						count = 1000;
 					} else {
 						continue;
 					}
-				} catch(IOException e) {
+				} catch (IOException e) {
 					clientSocket.close();
 					continue;
 				}
@@ -95,14 +105,14 @@ public class Client {// 只是用于测试，不是完整版的client
 				count = 1000;
 			}
 			try {
-				Thread.sleep(1000*5);
+				Thread.sleep(1000 * 5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
-		new Client().sendCommand("select * from log where logIndex = 1", true);
+		new Client().sendCommand("select * from log where logIndex > 1", true, new Callback());
 	}
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<recipe>
+	<nodeList><!-- 集群中所有的服务器的地址 -->
+		<ipport>127.0.0.1:8080</ipport>
+		<ipport>127.0.0.1:8081</ipport>
+		<ipport>127.0.0.1:8082</ipport>
+	</nodeList>
+</recipe>
