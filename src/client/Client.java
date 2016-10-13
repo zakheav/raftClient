@@ -57,13 +57,14 @@ public class Client {// 只是用于测试，不是完整版的client
 		return false;
 	}
 
-	public void sendCommand(String command) {
+	public void sendCommand(String command, boolean read) {
 		int count = 0;
 		while (count < tryTimes) {
 			++count;
 			if(tryConnectingLeader()) {
 				List<Object> msg8 = new ArrayList<Object>();
 				msg8.add(8);
+				msg8.add(read);
 				msg8.add(command);
 				msg8.add(commandId);
 				String massage8 = JSON.ArrayToJSON(msg8);// 打包指令消息
@@ -77,8 +78,10 @@ public class Client {// 只是用于测试，不是完整版的client
 				try {
 					List<Object> msg = JSON.JSONToArray(clientSocket.read());
 					Integer msgType = (Integer)msg.get(0);
+					String resp = (String)msg.get(1);
 					if(msgType == 9) {
 						System.out.println("收到server响应");
+						System.out.println(resp);
 						count = 1000;
 					} else {
 						continue;
@@ -100,6 +103,6 @@ public class Client {// 只是用于测试，不是完整版的client
 	}
 	
 	public static void main(String[] args) {
-		new Client().sendCommand("hello woshigehaoren3");
+		new Client().sendCommand("select * from log where logIndex = 1", true);
 	}
 }
