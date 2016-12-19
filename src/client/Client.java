@@ -9,7 +9,7 @@ import org.apache.commons.id.Hex;
 import util.JSON;
 import util.XML;
 
-public class Client {// 只是用于测试，不是完整版的client
+public class Client {
 
 	private ClientSocket clientSocket;
 	private List<String> serverAddrList; // 服务器地址列表
@@ -17,17 +17,17 @@ public class Client {// 只是用于测试，不是完整版的client
 	private String commandId;
 
 	@SuppressWarnings("unchecked")
-	private Client() {
+	public Client() {
 		Map<String, Object> conf = new XML().nodeConf();
 		this.tryTimes = 5;
 		this.serverAddrList = new ArrayList<String>();
 		for (String ipport : (List<String>) (conf.get("ipport"))) {
 			this.serverAddrList.add(ipport);
 		}
-		commandId = getCode();
+		commandId = get_code();
 	}
 
-	private String getCode() {
+	private String get_code() {
 		return new String(Hex.encodeHex(org.apache.commons.id.uuid.UUID.randomUUID().getRawBytes()));
 	}
 
@@ -56,7 +56,7 @@ public class Client {// 只是用于测试，不是完整版的client
 		return false;
 	}
 
-	public void sendCommand(String command, boolean read, Callback callback) {
+	public void send_command(String command, boolean read, Callback callback) {
 		int count = 0;
 		while (count < tryTimes) {
 			++count;
@@ -110,9 +110,5 @@ public class Client {// 只是用于测试，不是完整版的client
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public static void main(String[] args) {
-		new Client().sendCommand("select * from log where logIndex > 1", true, new Callback());
 	}
 }
