@@ -3,7 +3,7 @@ package myClient;
 import client.Client;
 
 class MyThread implements Runnable {
-	@Override
+
 	public void run() {
 		new Client().send_command("xxxxxxx", false, new MyCallback());
 	}
