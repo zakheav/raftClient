@@ -51,7 +51,6 @@ public class Client {
 				msg6.add(6);
 				String massage6 = JSON.ArrayToJSON(msg6);
 				clientSocket.write(massage6);
-
 				List<Object> msg7 = JSON.JSONToArray(clientSocket.read());
 				Boolean success = (Boolean) msg7.get(1);
 				if (success) {
@@ -61,6 +60,7 @@ public class Client {
 				continue;
 			}
 			++i;
+			
 		} while(i % serverNum != beginIdx);
 		return -1;
 	}
