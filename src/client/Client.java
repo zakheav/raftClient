@@ -66,6 +66,7 @@ public class Client {
 	}
 
 	public void send_command(String command, boolean read, Callback callback) {
+		command = command.replaceAll("\'", "\"");
 		int count = 0;
 		int beginIdx = 0;
 		while (count < tryTimes) {
@@ -121,7 +122,7 @@ public class Client {
 				count = 1000;
 			}
 			try {
-				Thread.sleep(1000 * 5);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

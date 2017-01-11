@@ -8,9 +8,8 @@ import client.Callback;
 public class MyCallback implements Callback {
 	public void callback(List<Map<String, Object>> results) {
 		for(Map<String, Object> row : results) {
-			int index = (Integer)row.get("logIndex");
-			String command = (String)row.get("command");
-			System.out.println(index + " " + command);
+			String name = (String)row.get("name");
+			System.out.println(name);
 		}
 	}
 }
