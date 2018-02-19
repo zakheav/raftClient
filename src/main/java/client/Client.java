@@ -6,7 +6,7 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.id.Hex;
+import java.util.UUID;
 import util.JSON;
 import util.XML;
 
@@ -33,7 +33,7 @@ public class Client {
 	}
 
 	private String get_code() {
-		return new String(Hex.encodeHex(org.apache.commons.id.uuid.UUID.randomUUID().getRawBytes()));
+		return UUID.randomUUID().toString().replace("-", "");
 	}
 
 	private int tryConnectingLeader(int beginIdx) {
